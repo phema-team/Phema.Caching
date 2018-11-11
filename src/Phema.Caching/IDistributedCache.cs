@@ -1,117 +1,77 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+using Newtonsoft.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Options;
 
 namespace Phema.Caching
 {
-	public interface IDistributedCache<TValue>
+	public abstract class DistributedCache<TKey, TValue>
 	{
-		TValue Get(string key);
-		Task<TValue> GetAsync(string key, CancellationToken token = new CancellationToken());
-		void Set(string key, TValue value, DistributedCacheEntryOptions entryOptions);
+		private readonly string prefix;
 
-		Task SetAsync(
-			string key,
+		protected DistributedCache()
+		{
+			var type = typeof(TValue);
+			prefix = type.GetCustomAttribute<DataContractAttribute>()?.Name ?? type.Name;
+		}
+		
+		internal IDistributedCache Cache { get; set; }
+
+		protected async Task<TValue> GetAsync(TKey key, CancellationToken token = new CancellationToken())
+		{
+			if (key == null)
+				throw new ArgumentNullException(nameof(key));
+			
+			var data = await Cache.GetAsync(GetFullKey(key), token);
+
+			return data == null 
+				? default 
+				: JsonConvert.DeserializeObject<TValue>(Encoding.UTF8.GetString(data));
+		}
+
+		protected Task SetAsync(
+			TKey key,
 			TValue value,
-			DistributedCacheEntryOptions entryOptions = null,
-			CancellationToken token = new CancellationToken());
-
-		void Refresh(string key);
-		Task RefreshAsync(string key, CancellationToken token = new CancellationToken());
-		void Remove(string key);
-		Task RemoveAsync(string key, CancellationToken token = new CancellationToken());
-	}
-	
-	internal class DistributedCache<TValue> : IDistributedCache<TValue>
-	{
-		private readonly IDistributedCache cache;
-		private readonly DistributedCacheOptions options;
-
-		public DistributedCache(IDistributedCache cache, IOptions<DistributedCacheOptions> options)
-		{
-			this.cache = cache;
-			this.options = options.Value;
-		}
-
-		public TValue Get(string key)
-		{
-			var data = cache.Get(GetFullKey(key));
-
-			if (data == null)
-			{
-				return default(TValue);
-			}
-			
-			var value = options.Encoding.GetString(data);
-
-			return JsonConvert.DeserializeObject<TValue>(value);
-		}
-
-		public async Task<TValue> GetAsync(string key, CancellationToken token = new CancellationToken())
-		{
-			var data = await cache.GetAsync(GetFullKey(key), token);
-			
-			if (data == null)
-			{
-				return default(TValue);
-			}
-			
-			var value = options.Encoding.GetString(data);
-
-			return JsonConvert.DeserializeObject<TValue>(value);
-		}
-
-		public void Set(string key, TValue value, DistributedCacheEntryOptions entryOptions)
-		{
-			var serializedValue = JsonConvert.SerializeObject(value);
-
-			var data = options.Encoding.GetBytes(serializedValue);
-			
-			cache.Set(GetFullKey(key), data, entryOptions);
-		}
-
-		public Task SetAsync(string key, TValue value, 
 			DistributedCacheEntryOptions entryOptions = null,
 			CancellationToken token = new CancellationToken())
 		{
-			var serializedValue = JsonConvert.SerializeObject(value);
+			if (key == null)
+				throw new ArgumentNullException(nameof(key));
+			if (value == null)
+				throw new ArgumentNullException(nameof(value));
+			
+			var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(value));
 
-			var data = options.Encoding.GetBytes(serializedValue);
-
-			return cache.SetAsync(
-				GetFullKey(key), 
-				data, 
-				entryOptions ?? new DistributedCacheEntryOptions(), 
-				token);
+			return Cache.SetAsync(GetFullKey(key), data, entryOptions ?? new DistributedCacheEntryOptions(), token);
 		}
 
-		public void Refresh(string key)
+		protected Task RefreshAsync(TKey key, CancellationToken token = new CancellationToken())
 		{
-			cache.Refresh(GetFullKey(key));
+			if (key == null)
+				throw new ArgumentNullException(nameof(key));
+			
+			return Cache.RefreshAsync(GetFullKey(key), token);
 		}
 
-		public Task RefreshAsync(string key, CancellationToken token = new CancellationToken())
+		protected Task RemoveAsync(TKey key, CancellationToken token = new CancellationToken())
 		{
-			return cache.RefreshAsync(GetFullKey(key), token);
+			if (key == null)
+				throw new ArgumentNullException(nameof(key));
+			
+			return Cache.RemoveAsync(GetFullKey(key), token);
 		}
-
-		public void Remove(string key)
+		
+		private string GetFullKey(TKey key)
 		{
-			cache.Remove(GetFullKey(key));
+			return $"{prefix}:{JsonConvert.SerializeObject(key)}";
 		}
-
-		public Task RemoveAsync(string key, CancellationToken token = new CancellationToken())
-		{
-			return cache.RemoveAsync(GetFullKey(key), token);
-		}
-
-		private string GetFullKey(string key)
-		{
-			var prefix = options.Prefixes[typeof(TValue)];
-
-			return $"{prefix}:{key}";
-		}
+	}
+	
+	public class DistributedCache<TValue> : DistributedCache<string, TValue>
+	{
 	}
 }

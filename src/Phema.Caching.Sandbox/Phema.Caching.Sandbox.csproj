@@ -9,6 +9,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Phema.Caching.Extensions\Phema.Caching.Extensions.csproj" />
 	  <ProjectReference Include="..\Phema.Caching\Phema.Caching.csproj" />
 	</ItemGroup>
 

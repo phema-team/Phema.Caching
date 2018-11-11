@@ -2,7 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' " />
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.1.2" />

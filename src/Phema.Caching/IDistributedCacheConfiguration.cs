@@ -1,12 +1,12 @@
-﻿using System.Reflection;
-using System.Runtime.Serialization;
+﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Phema.Caching
 {
 	public interface IDistributedCacheConfiguration
 	{
-		IDistributedCacheConfiguration AddCache<TValue>();
+		IDistributedCacheConfiguration AddCache<TKey, TValue, TDistributedCache>()
+			where TDistributedCache : DistributedCache<TKey, TValue>;
 	}
 	
 	internal class DistributedCacheConfiguration : IDistributedCacheConfiguration
@@ -18,21 +18,16 @@ namespace Phema.Caching
 			this.services = services;
 		}
 		
-		public IDistributedCacheConfiguration AddCache<TValue>()
+		public IDistributedCacheConfiguration AddCache<TKey, TValue, TDistributedCache>()
+			where TDistributedCache : DistributedCache<TKey, TValue>
 		{
-			services.Configure<DistributedCacheOptions>(
-				options =>
+			services.AddScoped<DistributedCache<TKey, TValue>, TDistributedCache>()
+				.AddScoped(sp =>
 				{
-					var type = typeof(TValue);
-
-					var attribute = type.GetCustomAttribute<DataContractAttribute>();
-
-					var prefix = attribute?.Name ?? type.Name;
-					
-					options.Prefixes.Add(type, prefix);
+					var instance = sp.GetRequiredService<DistributedCache<TKey, TValue>>();
+					instance.Cache = sp.GetRequiredService<IDistributedCache>();
+					return (TDistributedCache) instance;
 				});
-
-			services.AddSingleton<IDistributedCache<TValue>, DistributedCache<TValue>>();
 			
 			return this;
 		}
