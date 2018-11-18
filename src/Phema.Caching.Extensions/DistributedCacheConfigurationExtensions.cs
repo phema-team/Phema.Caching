@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Phema.Caching
+﻿namespace Phema.Caching
 {
 	public static class DistributedCacheConfigurationExtensions
 	{

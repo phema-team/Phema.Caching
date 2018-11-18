@@ -16,16 +16,17 @@ namespace Phema.Caching.Tests
 		public CommonTests()
 		{
 			services = new ServiceCollection();
+			
+			services
+				.AddDistributedMemoryCache()
+				.AddDistributedCaching(caching => 
+					caching.AddCache<TestModel, TestModelDistributedCacheWithPublicMethods>())
+				.WithJsonSerialization();
 		}
 		
 		[Fact]
 		public void AddsCaching()
 		{
-			services
-				.AddDistributedMemoryCache()
-				.AddDistributedCaching(caching => 
-					caching.AddCache<TestModel, TestModelDistributedCacheWithPublicMethods>());
-
 			Assert.Single(services.Where(x => x.ServiceType == typeof(DistributedCache<string, TestModel>)));
 			Assert.Single(services.Where(x => x.ServiceType == typeof(TestModelDistributedCacheWithPublicMethods)));
 		}
@@ -33,11 +34,6 @@ namespace Phema.Caching.Tests
 		[Fact]
 		public async Task SetNullKey()
 		{
-			services
-				.AddDistributedMemoryCache()
-				.AddDistributedCaching(caching => 
-					caching.AddCache<TestModel, TestModelDistributedCacheWithPublicMethods>());
-
 			var provider = services.BuildServiceProvider();
 
 			var cache = provider.GetRequiredService<TestModelDistributedCacheWithPublicMethods>();
@@ -49,11 +45,6 @@ namespace Phema.Caching.Tests
 		[Fact]
 		public async Task SetNullValue()
 		{
-			services
-				.AddDistributedMemoryCache()
-				.AddDistributedCaching(caching => 
-					caching.AddCache<TestModel, TestModelDistributedCacheWithPublicMethods>());
-
 			var provider = services.BuildServiceProvider();
 
 			var cache = provider.GetRequiredService<TestModelDistributedCacheWithPublicMethods>();
@@ -65,11 +56,6 @@ namespace Phema.Caching.Tests
 		[Fact]
 		public async Task RemoveNullKey()
 		{
-			services
-				.AddDistributedMemoryCache()
-				.AddDistributedCaching(caching => 
-					caching.AddCache<TestModel, TestModelDistributedCacheWithPublicMethods>());
-
 			var provider = services.BuildServiceProvider();
 
 			var cache = provider.GetRequiredService<TestModelDistributedCacheWithPublicMethods>();
@@ -81,11 +67,6 @@ namespace Phema.Caching.Tests
 		[Fact]
 		public async Task RefreshNullKey()
 		{
-			services
-				.AddDistributedMemoryCache()
-				.AddDistributedCaching(caching => 
-					caching.AddCache<TestModel, TestModelDistributedCacheWithPublicMethods>());
-
 			var provider = services.BuildServiceProvider();
 
 			var cache = provider.GetRequiredService<TestModelDistributedCacheWithPublicMethods>();
@@ -97,11 +78,6 @@ namespace Phema.Caching.Tests
 		[Fact]
 		public async Task SetGetValue()
 		{
-			services
-				.AddDistributedMemoryCache()
-				.AddDistributedCaching(caching => 
-					caching.AddCache<TestModel, TestModelDistributedCacheWithPublicMethods>());
-
 			var provider = services.BuildServiceProvider();
 
 			var cache = provider.GetRequiredService<TestModelDistributedCacheWithPublicMethods>();
@@ -116,11 +92,6 @@ namespace Phema.Caching.Tests
 		[Fact]
 		public async Task SetRemoveGetValue()
 		{
-			services
-				.AddDistributedMemoryCache()
-				.AddDistributedCaching(caching => 
-					caching.AddCache<TestModel, TestModelDistributedCacheWithPublicMethods>());
-
 			var provider = services.BuildServiceProvider();
 
 			var cache = provider.GetRequiredService<TestModelDistributedCacheWithPublicMethods>();
@@ -137,11 +108,6 @@ namespace Phema.Caching.Tests
 		[Fact]
 		public async Task SetGetValueByPrefix()
 		{
-			services
-				.AddDistributedMemoryCache()
-				.AddDistributedCaching(caching => 
-					caching.AddCache<TestModel, TestModelDistributedCacheWithPublicMethods>());
-
 			var provider = services.BuildServiceProvider();
 
 			var cache = provider.GetRequiredService<TestModelDistributedCacheWithPublicMethods>();
@@ -150,7 +116,7 @@ namespace Phema.Caching.Tests
 
 			var distributedCache = provider.GetRequiredService<IDistributedCache>();
 
-			var data = await distributedCache.GetAsync("TestModel:\"test\"");
+			var data = await distributedCache.GetAsync("{\"prefix\":\"String:model\",\"key\":\"test\"}");
 
 			Assert.NotNull(data);
 			
