@@ -12,12 +12,7 @@
 
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.1.2" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Reference Include="Phema.Configuration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-	    <HintPath>..\..\..\Phema.Configuration\src\Phema.Configuration\bin\Debug\netstandard2.0\Phema.Configuration.dll</HintPath>
-	  </Reference>
+	  <PackageReference Include="Phema.Configuration" Version="1.0.0" />
 	</ItemGroup>
 
 </Project>
