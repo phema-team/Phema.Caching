@@ -1,4 +1,4 @@
-# phema.caching
+# Phema.Caching
 Strongly typed IDistributedCache wrapper using DI
 
 # Core library
