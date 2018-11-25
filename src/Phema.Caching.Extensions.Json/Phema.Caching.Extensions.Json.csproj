@@ -7,11 +7,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Phema.Caching\Phema.Caching.csproj" />
+		<ProjectReference Include="..\Phema.Caching\Phema.Caching.csproj"/>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+		<PackageReference Include="Newtonsoft.Json" Version="11.0.2"/>
 	</ItemGroup>
 
 </Project>
