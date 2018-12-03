@@ -10,8 +10,8 @@ namespace Phema.Caching.Sandbox
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddDistributedRedisCaching(caching =>
-				caching.AddCache<TestModel, TestModelDistributedCache>())
-				.WithJsonSerialization();
+				caching.AddCache<TestModel, TestModelDistributedCache>("test_model"),
+				options => {});
 
 			services.AddScoped<StringGenerator>();
 		}

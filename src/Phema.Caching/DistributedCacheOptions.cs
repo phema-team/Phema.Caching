@@ -1,18 +1,19 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Phema.Caching
 {
-	public abstract class DistributedCacheOptions
+	public class DistributedCacheOptions
 	{
-		protected DistributedCacheOptions()
+		public DistributedCacheOptions()
 		{
 			Encoding = Encoding.UTF8;
+			Prefixes = new Dictionary<Type, string>();
 		}
 		
 		public Encoding Encoding { get; set; }
-
-		protected internal abstract string Serialize<TValue>(TValue value);
-
-		protected internal abstract TValue Deserialize<TValue>(string data);
+		
+		internal IDictionary<Type, string> Prefixes { get; }
 	}
 }

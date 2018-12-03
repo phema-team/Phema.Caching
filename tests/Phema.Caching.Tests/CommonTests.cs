@@ -16,18 +16,16 @@ namespace Phema.Caching.Tests
 		public CommonTests()
 		{
 			services = new ServiceCollection();
-			
+
 			services
 				.AddDistributedMemoryCache()
-				.AddDistributedCaching(caching => 
-					caching.AddCache<TestModel, TestModelDistributedCacheWithPublicMethods>())
-				.WithJsonSerialization();
+				.AddDistributedCaching(caching =>
+					caching.AddCache<string, TestModel, TestModelDistributedCacheWithPublicMethods>("test_model"));
 		}
 		
 		[Fact]
 		public void AddsCaching()
 		{
-			Assert.Single(services.Where(x => x.ServiceType == typeof(DistributedCache<string, TestModel>)));
 			Assert.Single(services.Where(x => x.ServiceType == typeof(TestModelDistributedCacheWithPublicMethods)));
 		}
 		
@@ -116,7 +114,7 @@ namespace Phema.Caching.Tests
 
 			var distributedCache = provider.GetRequiredService<IDistributedCache>();
 
-			var data = await distributedCache.GetAsync("{\"prefix\":\"String:model\",\"key\":\"test\"}");
+			var data = await distributedCache.GetAsync("test_model:test");
 
 			Assert.NotNull(data);
 			

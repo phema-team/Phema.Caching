@@ -4,7 +4,7 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace Phema.Caching.Tests
 {
-	public class TestModelDistributedCacheWithPublicMethods : DistributedCache<TestModel>
+	public class TestModelDistributedCacheWithPublicMethods : DistributedCache<string, TestModel>
 	{
 		public new Task<TestModel> GetAsync(string key, CancellationToken token = new CancellationToken())
 		{

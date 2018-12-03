@@ -1,11 +1,13 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using System;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Phema.Caching
 {
 	public interface IDistributedCacheConfiguration
 	{
-		IDistributedCacheConfiguration AddCache<TKey, TValue, TDistributedCache>()
+		IDistributedCacheConfiguration AddCache<TKey, TValue, TDistributedCache>(string prefix)
 			where TDistributedCache : DistributedCache<TKey, TValue>;
 	}
 	
@@ -18,19 +20,23 @@ namespace Phema.Caching
 			this.services = services;
 		}
 		
-		public IDistributedCacheConfiguration AddCache<TKey, TValue, TDistributedCache>()
+		public IDistributedCacheConfiguration AddCache<TKey, TValue, TDistributedCache>(string prefix)
 			where TDistributedCache : DistributedCache<TKey, TValue>
 		{
-			services.AddScoped<DistributedCache<TKey, TValue>, TDistributedCache>()
-				.AddScoped(sp =>
-				{
-					var instance = sp.GetRequiredService<DistributedCache<TKey, TValue>>();
-					instance.Cache = sp.GetRequiredService<IDistributedCache>();
-					instance.Options = sp.GetRequiredService<DistributedCacheOptions>();
-					return (TDistributedCache) instance;
-				});
-			
+			services.Configure<DistributedCacheOptions>(options =>
+				options.Prefixes.Add(typeof(TDistributedCache), prefix));
+
+			services.AddScoped(InjectProperties<TKey, TValue, TDistributedCache>);
 			return this;
+		}
+
+		private TDistributedCache InjectProperties<TKey, TValue, TDistributedCache>(IServiceProvider provider)
+			where TDistributedCache : DistributedCache<TKey, TValue>
+		{
+			var instance = ActivatorUtilities.CreateInstance<TDistributedCache>(provider, Array.Empty<object>());
+			instance.Cache = provider.GetRequiredService<IDistributedCache>();
+			instance.Options = provider.GetRequiredService<IOptions<DistributedCacheOptions>>().Value;
+			return instance;
 		}
 	}
 }
