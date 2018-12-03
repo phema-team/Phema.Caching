@@ -12,6 +12,20 @@ namespace Phema.Caching
 		internal IDistributedCache Cache { get; set; }
 		internal DistributedCacheOptions Options { get; set; }
 
+		protected TValue Get(TKey key)
+		{
+			if (key == null)
+				throw new ArgumentNullException(nameof(key));
+			
+			var fullKey = GetFullKey(key, GetType(), Options);
+			
+			var data = Cache.Get(fullKey);
+			
+			return data == null
+				? default
+				: Deserialize<TValue>(data, Options);
+		}
+		
 		protected async Task<TValue> GetAsync(TKey key, CancellationToken token = new CancellationToken())
 		{
 			if (key == null)
@@ -26,6 +40,26 @@ namespace Phema.Caching
 				: Deserialize<TValue>(data, Options);
 		}
 
+		protected void Set(
+			TKey key,
+			TValue value,
+			DistributedCacheEntryOptions options = null)
+		{
+			if (key == null)
+				throw new ArgumentNullException(nameof(key));
+			if (value == null)
+				throw new ArgumentNullException(nameof(value));
+
+			var data = Serialize(value, Options);
+
+			var fullKey = GetFullKey(key, GetType(), Options);
+			
+			Cache.Set(
+				key: fullKey,
+				value: data,
+				options: options ?? new DistributedCacheEntryOptions());
+		}
+		
 		protected Task SetAsync(
 			TKey key,
 			TValue value,
@@ -48,6 +82,16 @@ namespace Phema.Caching
 				token: token);
 		}
 
+		protected void Refresh(TKey key)
+		{
+			if (key == null)
+				throw new ArgumentNullException(nameof(key));
+
+			var fullKey = GetFullKey(key, GetType(), Options);
+			
+			Cache.Refresh(key: fullKey);
+		}
+		
 		protected Task RefreshAsync(TKey key, CancellationToken token = new CancellationToken())
 		{
 			if (key == null)
@@ -55,9 +99,17 @@ namespace Phema.Caching
 
 			var fullKey = GetFullKey(key, GetType(), Options);
 			
-			return Cache.RefreshAsync(
-				key: fullKey, 
-				token: token);
+			return Cache.RefreshAsync(key: fullKey, token: token);
+		}
+
+		protected void Remove(TKey key)
+		{
+			if (key == null)
+				throw new ArgumentNullException(nameof(key));
+			
+			var fullKey = GetFullKey(key, GetType(), Options);
+			
+			Cache.Remove(key: fullKey);
 		}
 
 		protected Task RemoveAsync(TKey key, CancellationToken token = new CancellationToken())
