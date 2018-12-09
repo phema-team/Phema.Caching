@@ -4,7 +4,7 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<RootNamespace>Phema.Caching</RootNamespace>
 		<LangVersion>7.3</LangVersion>
-		<Version>1.1.0</Version>
+		<Version>1.1.1</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
