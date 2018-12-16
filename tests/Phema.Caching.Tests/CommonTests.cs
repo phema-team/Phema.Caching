@@ -20,13 +20,13 @@ namespace Phema.Caching.Tests
 			services
 				.AddDistributedMemoryCache()
 				.AddDistributedCaching(caching =>
-					caching.AddCache<string, TestModel, TestModelDistributedCacheWithPublicMethods>("test_model"));
+					caching.AddCache<string, TestModel>("test_model"));
 		}
 		
 		[Fact]
 		public void AddsCaching()
 		{
-			Assert.Single(services.Where(x => x.ServiceType == typeof(TestModelDistributedCacheWithPublicMethods)));
+			Assert.Single(services.Where(x => x.ServiceType == typeof(IDistributedCache<string, TestModel>)));
 		}
 		
 		[Fact]
@@ -34,7 +34,7 @@ namespace Phema.Caching.Tests
 		{
 			var provider = services.BuildServiceProvider();
 
-			var cache = provider.GetRequiredService<TestModelDistributedCacheWithPublicMethods>();
+			var cache = provider.GetRequiredService<IDistributedCache<string, TestModel>>();
 			
 			await Assert.ThrowsAsync<ArgumentNullException>(
 				async () => await cache.SetAsync(null, new TestModel()));
@@ -45,7 +45,7 @@ namespace Phema.Caching.Tests
 		{
 			var provider = services.BuildServiceProvider();
 
-			var cache = provider.GetRequiredService<TestModelDistributedCacheWithPublicMethods>();
+			var cache = provider.GetRequiredService<IDistributedCache<string, TestModel>>();
 			
 			await Assert.ThrowsAsync<ArgumentNullException>(
 				async () => await cache.SetAsync("test", null));
@@ -56,7 +56,7 @@ namespace Phema.Caching.Tests
 		{
 			var provider = services.BuildServiceProvider();
 
-			var cache = provider.GetRequiredService<TestModelDistributedCacheWithPublicMethods>();
+			var cache = provider.GetRequiredService<IDistributedCache<string, TestModel>>();
 			
 			await Assert.ThrowsAsync<ArgumentNullException>(
 				async () => await cache.RemoveAsync(null));
@@ -67,7 +67,7 @@ namespace Phema.Caching.Tests
 		{
 			var provider = services.BuildServiceProvider();
 
-			var cache = provider.GetRequiredService<TestModelDistributedCacheWithPublicMethods>();
+			var cache = provider.GetRequiredService<IDistributedCache<string, TestModel>>();
 			
 			await Assert.ThrowsAsync<ArgumentNullException>(
 				async () => await cache.RefreshAsync(null));
@@ -78,7 +78,7 @@ namespace Phema.Caching.Tests
 		{
 			var provider = services.BuildServiceProvider();
 
-			var cache = provider.GetRequiredService<TestModelDistributedCacheWithPublicMethods>();
+			var cache = provider.GetRequiredService<IDistributedCache<string, TestModel>>();
 			
 			await cache.SetAsync("test", new TestModel { Name = "name"});
 
@@ -92,7 +92,7 @@ namespace Phema.Caching.Tests
 		{
 			var provider = services.BuildServiceProvider();
 
-			var cache = provider.GetRequiredService<TestModelDistributedCacheWithPublicMethods>();
+			var cache = provider.GetRequiredService<IDistributedCache<string, TestModel>>();
 			
 			await cache.SetAsync("test", new TestModel { Name = "name"});
 
@@ -108,7 +108,7 @@ namespace Phema.Caching.Tests
 		{
 			var provider = services.BuildServiceProvider();
 
-			var cache = provider.GetRequiredService<TestModelDistributedCacheWithPublicMethods>();
+			var cache = provider.GetRequiredService<IDistributedCache<string, TestModel>>();
 			
 			await cache.SetAsync("test", new TestModel { Name = "name"});
 

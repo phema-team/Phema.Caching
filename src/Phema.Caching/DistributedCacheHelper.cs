@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 
 namespace Phema.Caching
@@ -7,7 +8,12 @@ namespace Phema.Caching
 	{
 		public static string GetFullKey<TKey>(TKey key, Type type, DistributedCacheOptions options)
 		{
-			return $"{options.Prefixes[type]}:{key}";
+			return $"{options.Prefixes[type]}{options.Separator}{key}";
+		}
+		
+		public static DistributedCacheEntryOptions GetOptions<TValue>(DistributedCacheOptions options)
+		{
+			return options.Options[typeof(TValue)];
 		}
 		
 		public static TValue Deserialize<TValue>(byte[] data, DistributedCacheOptions options)

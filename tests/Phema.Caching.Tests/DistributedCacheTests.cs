@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Phema.Caching.Tests
 {
-	public class CommonTests
+	public class DistributedCacheTests
 	{
 		[Fact]
 		public void ServiceAddsCache()
@@ -15,9 +15,9 @@ namespace Phema.Caching.Tests
 
 			services.AddDistributedMemoryCache()
 				.AddDistributedCaching(caching =>
-					caching.AddCache<TestModel, TestModelDistributedCacheWithPublicMethods>("prefix"));
+					caching.AddCache<string, TestModel>("prefix"));
 
-			Assert.Single(services.Where(s => s.ServiceType == typeof(TestModelDistributedCacheWithPublicMethods)));
+			Assert.Single(services.Where(s => s.ServiceType == typeof(IDistributedCache<string, TestModel>)));
 		}
 		
 		[Fact]
@@ -27,12 +27,12 @@ namespace Phema.Caching.Tests
 
 			services.AddDistributedMemoryCache()
 				.AddDistributedCaching(caching =>
-					caching.AddCache<TestModel, TestModelDistributedCacheWithPublicMethods>("prefix"));
+					caching.AddCache<string, TestModel>("prefix"));
 
 			var provider = services.BuildServiceProvider();
 
 			var memoryCache = provider.GetRequiredService<IDistributedCache>();
-			var cache = provider.GetRequiredService<TestModelDistributedCacheWithPublicMethods>();
+			var cache = provider.GetRequiredService<IDistributedCache<string, TestModel>>();
 			
 			await cache.SetAsync("key", new TestModel { Name = "Alice"});
 
