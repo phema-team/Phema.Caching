@@ -20,7 +20,11 @@ namespace Phema.Caching
 		void Remove(TKey key);
 		Task RemoveAsync(TKey key, CancellationToken token = default);
 	}
-	
+
+	public interface IDistributedCache<TValue> : IDistributedCache<string, TValue>
+	{
+	}
+
 	internal class DistributedCache<TKey, TValue> : IDistributedCache<TKey, TValue>
 	{
 		private readonly IDistributedCache cache;
@@ -135,6 +139,13 @@ namespace Phema.Caching
 			return cache.RemoveAsync(
 				key: fullKey, 
 				token: token);
+		}
+	}
+
+	internal class DistributedCache<TValue> : DistributedCache<string, TValue>, IDistributedCache<TValue>
+	{
+		public DistributedCache(IDistributedCache cache, IOptions<DistributedCacheOptions> options) : base(cache, options)
+		{
 		}
 	}
 }
