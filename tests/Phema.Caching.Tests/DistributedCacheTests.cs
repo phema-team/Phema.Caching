@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using System.Linq;
+using Phema.Serialization;
 
 namespace Phema.Caching.Tests
 {
@@ -13,7 +14,9 @@ namespace Phema.Caching.Tests
 		{
 			var services = new ServiceCollection();
 
-			services.AddDistributedMemoryCache()
+			services
+				.AddJsonSerializer()
+				.AddDistributedMemoryCache()
 				.AddDistributedCaching(caching =>
 					caching.AddCache<string, TestModel>("prefix"));
 
@@ -25,7 +28,9 @@ namespace Phema.Caching.Tests
 		{
 			var services = new ServiceCollection();
 
-			services.AddDistributedMemoryCache()
+			services
+				.AddJsonSerializer()
+				.AddDistributedMemoryCache()
 				.AddDistributedCaching(caching =>
 					caching.AddCache<string, TestModel>("prefix"));
 

@@ -1,8 +1,7 @@
 using System;
-using System.Text;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
+using Phema.Serialization;
 using Xunit;
 
 namespace Phema.Caching.Tests
@@ -14,7 +13,9 @@ namespace Phema.Caching.Tests
 		{
 			var services = new ServiceCollection();
 
-			services.AddDistributedMemoryCache()
+			services
+				.AddJsonSerializer()
+				.AddDistributedMemoryCache()
 				.AddDistributedCaching(caching =>
 					caching.AddCache<string, TestModel>("prefix", new DistributedCacheEntryOptions
 					{

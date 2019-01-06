@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
-
-[assembly: InternalsVisibleTo("Phema.Caching.Tests")]
 
 namespace Phema.Caching
 {

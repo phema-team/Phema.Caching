@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Phema.Serialization;
 using Xunit;
 
 namespace Phema.Caching.Tests
@@ -10,7 +11,9 @@ namespace Phema.Caching.Tests
 		{
 			var services = new ServiceCollection();
 
-			services.AddDistributedMemoryCache()
+			services
+				.AddJsonSerializer()
+				.AddDistributedMemoryCache()
 				.AddDistributedCaching(c => c.AddCache<TestModel>("test_model"));
 
 			var provider = services.BuildServiceProvider();

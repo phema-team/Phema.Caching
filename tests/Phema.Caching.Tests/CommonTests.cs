@@ -6,6 +6,7 @@ using Xunit;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using Phema.Serialization;
 
 namespace Phema.Caching.Tests
 {
@@ -18,6 +19,7 @@ namespace Phema.Caching.Tests
 			services = new ServiceCollection();
 
 			services
+				.AddJsonSerializer()
 				.AddDistributedMemoryCache()
 				.AddDistributedCaching(caching =>
 					caching.AddCache<string, TestModel>("test_model"));
