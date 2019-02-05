@@ -5,11 +5,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Phema.Caching\Phema.Caching.csproj" />
+      <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.2.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.2.0" />
+      <ProjectReference Include="..\Phema.Caching\Phema.Caching.csproj" />
     </ItemGroup>
 
 </Project>
