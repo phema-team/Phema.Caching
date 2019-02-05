@@ -16,3 +16,9 @@ services.AddDistributedMemoryCache()
 services.AddPhemaDistributedRedisCache(caching =>
   caching.AddCache<Model, ModelDistributedCache>());
 ```
+
+## Phema.Caching.Redis
+```csharp
+services.AddPhemaDistributedMemoryCache(caching =>
+  caching.AddCache<Model, ModelDistributedCache>());
+```
