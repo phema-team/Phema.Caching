@@ -8,13 +8,13 @@ namespace Phema.Caching
 	{
 		public PhemaDistributedCacheOptions()
 		{
-			Prefixes = new Dictionary<Type, string>();
-			Options = new Dictionary<Type, DistributedCacheEntryOptions>();
+			Prefixes = new Dictionary<(Type, Type), string>();
+			Options = new Dictionary<(Type, Type), DistributedCacheEntryOptions>();
 			Separator = ":";
 		}
 
 		public string Separator { get; set; }
-		internal IDictionary<Type, string> Prefixes { get; }
-		internal Dictionary<Type, DistributedCacheEntryOptions> Options { get; }
+		internal IDictionary<(Type, Type), string> Prefixes { get; }
+		internal Dictionary<(Type, Type), DistributedCacheEntryOptions> Options { get; }
 	}
 }

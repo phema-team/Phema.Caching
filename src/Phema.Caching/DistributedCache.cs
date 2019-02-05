@@ -33,7 +33,7 @@ namespace Phema.Caching
 			if (key == null)
 				throw new ArgumentNullException(nameof(key));
 			
-			var fullKey = DistributedCacheHelper.GetFullKey(key, typeof(TValue), options);
+			var fullKey = DistributedCacheHelper.GetFullKey<TKey, TValue>(key, options);
 			
 			var data = cache.Get(fullKey);
 			
@@ -47,7 +47,7 @@ namespace Phema.Caching
 			if (key == null)
 				throw new ArgumentNullException(nameof(key));
 
-			var fullKey = DistributedCacheHelper.GetFullKey(key, typeof(TValue), options);
+			var fullKey = DistributedCacheHelper.GetFullKey<TKey, TValue>(key, options);
 			
 			var data = await cache.GetAsync(fullKey, token);
 
@@ -65,12 +65,12 @@ namespace Phema.Caching
 
 			var data = serializer.Serialize(value);
 
-			var fullKey = DistributedCacheHelper.GetFullKey(key, typeof(TValue), options);
+			var fullKey = DistributedCacheHelper.GetFullKey<TKey, TValue>(key, options);
 			
 			cache.Set(
 				key: fullKey,
 				value: data,
-				options: DistributedCacheHelper.GetOptions<TValue>(options));
+				options: DistributedCacheHelper.GetOptions<TKey, TValue>(options));
 		}
 
 		public Task SetAsync(TKey key, TValue value, CancellationToken token = default)
@@ -82,12 +82,12 @@ namespace Phema.Caching
 
 			var data = serializer.Serialize(value);
 
-			var fullKey = DistributedCacheHelper.GetFullKey(key, typeof(TValue), options);
+			var fullKey = DistributedCacheHelper.GetFullKey<TKey, TValue>(key, options);
 			
 			return cache.SetAsync(
 				key: fullKey,
 				value: data, 
-				options: DistributedCacheHelper.GetOptions<TValue>(options), 
+				options: DistributedCacheHelper.GetOptions<TKey, TValue>(options), 
 				token: token);
 		}
 
@@ -96,7 +96,7 @@ namespace Phema.Caching
 			if (key == null)
 				throw new ArgumentNullException(nameof(key));
 
-			var fullKey = DistributedCacheHelper.GetFullKey(key, typeof(TValue), options);
+			var fullKey = DistributedCacheHelper.GetFullKey<TKey, TValue>(key, options);
 			
 			cache.Refresh(key: fullKey);
 		}
@@ -106,7 +106,7 @@ namespace Phema.Caching
 			if (key == null)
 				throw new ArgumentNullException(nameof(key));
 
-			var fullKey = DistributedCacheHelper.GetFullKey(key, typeof(TValue), options);
+			var fullKey = DistributedCacheHelper.GetFullKey<TKey, TValue>(key, options);
 			
 			return cache.RefreshAsync(key: fullKey, token: token);
 		}
@@ -116,7 +116,7 @@ namespace Phema.Caching
 			if (key == null)
 				throw new ArgumentNullException(nameof(key));
 			
-			var fullKey = DistributedCacheHelper.GetFullKey(key, typeof(TValue), options);
+			var fullKey = DistributedCacheHelper.GetFullKey<TKey, TValue>(key, options);
 			
 			cache.Remove(key: fullKey);
 		}
@@ -126,7 +126,7 @@ namespace Phema.Caching
 			if (key == null)
 				throw new ArgumentNullException(nameof(key));
 			
-			var fullKey = DistributedCacheHelper.GetFullKey(key, typeof(TValue), options);
+			var fullKey = DistributedCacheHelper.GetFullKey<TKey, TValue>(key, options);
 			
 			return cache.RemoveAsync(
 				key: fullKey, 

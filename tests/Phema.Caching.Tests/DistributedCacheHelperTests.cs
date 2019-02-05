@@ -7,11 +7,13 @@ namespace Phema.Caching.Tests
 		[Fact]
 		public void GetFullKey()
 		{
-			var fullKey = DistributedCacheHelper.GetFullKey("key", typeof(DistributedCacheHelperTests), new PhemaDistributedCacheOptions
+			var tuple = (typeof(string), typeof(TestModel));
+			
+			var fullKey = DistributedCacheHelper.GetFullKey<string, TestModel>("key", new PhemaDistributedCacheOptions
 			{
 				Prefixes =
 				{
-					[typeof(DistributedCacheHelperTests)] = "prefix"
+					[tuple] = "prefix"
 				}
 			});
 			

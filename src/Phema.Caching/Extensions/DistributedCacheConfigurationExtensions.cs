@@ -13,8 +13,10 @@ namespace Phema.Caching
 			configuration.Services
 				.Configure<PhemaDistributedCacheOptions>(o =>
 				{
-					o.Prefixes.Add(typeof(TValue), prefix);
-					o.Options.Add(typeof(TValue), options ?? new DistributedCacheEntryOptions());
+					var tuple = (typeof(TKey), typeof(TValue));
+					
+					o.Prefixes.Add(tuple, prefix);
+					o.Options.Add(tuple, options ?? new DistributedCacheEntryOptions());
 				});
 			
 			configuration.Services.AddScoped<IDistributedCache<TKey, TValue>, DistributedCache<TKey, TValue>>();
@@ -30,8 +32,10 @@ namespace Phema.Caching
 			configuration.Services
 				.Configure<PhemaDistributedCacheOptions>(o =>
 				{
-					o.Prefixes.Add(typeof(TValue), prefix);
-					o.Options.Add(typeof(TValue), options ?? new DistributedCacheEntryOptions());
+					var tuple = (typeof(string), typeof(TValue));
+					
+					o.Prefixes.Add(tuple, prefix);
+					o.Options.Add(tuple, options ?? new DistributedCacheEntryOptions());
 				});
 			
 			configuration.Services.AddScoped<IDistributedCache<TValue>, DistributedCache<TValue>>();
