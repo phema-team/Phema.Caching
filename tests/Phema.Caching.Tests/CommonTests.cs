@@ -21,7 +21,7 @@ namespace Phema.Caching.Tests
 			services
 				.AddJsonSerializer()
 				.AddDistributedMemoryCache()
-				.AddDistributedCaching(caching =>
+				.AddPhemaDistributedCache(caching =>
 					caching.AddCache<string, TestModel>("test_model"));
 		}
 		

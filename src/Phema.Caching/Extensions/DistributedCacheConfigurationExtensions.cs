@@ -11,7 +11,7 @@ namespace Phema.Caching
 			DistributedCacheEntryOptions options = null)
 		{
 			configuration.Services
-				.Configure<DistributedCacheOptions>(o =>
+				.Configure<PhemaDistributedCacheOptions>(o =>
 				{
 					o.Prefixes.Add(typeof(TValue), prefix);
 					o.Options.Add(typeof(TValue), options ?? new DistributedCacheEntryOptions());
@@ -28,7 +28,7 @@ namespace Phema.Caching
 			DistributedCacheEntryOptions options = null)
 		{
 			configuration.Services
-				.Configure<DistributedCacheOptions>(o =>
+				.Configure<PhemaDistributedCacheOptions>(o =>
 				{
 					o.Prefixes.Add(typeof(TValue), prefix);
 					o.Options.Add(typeof(TValue), options ?? new DistributedCacheEntryOptions());

@@ -17,7 +17,7 @@ namespace Phema.Caching.Tests
 			services
 				.AddJsonSerializer()
 				.AddDistributedMemoryCache()
-				.AddDistributedCaching(caching =>
+				.AddPhemaDistributedCache(caching =>
 					caching.AddCache<string, TestModel>("prefix"));
 
 			Assert.Single(services.Where(s => s.ServiceType == typeof(IDistributedCache<string, TestModel>)));
@@ -31,7 +31,7 @@ namespace Phema.Caching.Tests
 			services
 				.AddJsonSerializer()
 				.AddDistributedMemoryCache()
-				.AddDistributedCaching(caching =>
+				.AddPhemaDistributedCache(caching =>
 					caching.AddCache<string, TestModel>("prefix"));
 
 			var provider = services.BuildServiceProvider();

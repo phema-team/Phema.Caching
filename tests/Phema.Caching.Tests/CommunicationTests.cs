@@ -16,13 +16,13 @@ namespace Phema.Caching.Tests
 			services
 				.AddJsonSerializer()
 				.AddDistributedMemoryCache()
-				.AddDistributedCaching(caching =>
+				.AddPhemaDistributedCache(caching =>
 					caching.AddCache<string, TestModel>("prefix", new DistributedCacheEntryOptions
 					{
 						SlidingExpiration = TimeSpan.FromSeconds(1)
 					}));
 
-			services.Configure<DistributedCacheOptions>(o => o.Separator = ";;");
+			services.Configure<PhemaDistributedCacheOptions>(o => o.Separator = ";;");
 			
 			var provider = services.BuildServiceProvider();
 

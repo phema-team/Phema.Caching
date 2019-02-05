@@ -14,7 +14,7 @@ namespace Phema.Caching.Tests
 		{
 			var service = new ServiceCollection();
 			
-			service.AddDistributedRedisCaching(caching => {}, options => {});
+			service.AddPhemaDistributedRedisCache(caching => {}, options => {});
 
 			Assert.Single(service.Where(s => 
 				s.ServiceType == typeof(IDistributedCache) 

@@ -7,7 +7,7 @@ namespace Phema.Caching.Tests
 		[Fact]
 		public void GetFullKey()
 		{
-			var fullKey = DistributedCacheHelper.GetFullKey("key", typeof(DistributedCacheHelperTests), new DistributedCacheOptions
+			var fullKey = DistributedCacheHelper.GetFullKey("key", typeof(DistributedCacheHelperTests), new PhemaDistributedCacheOptions
 			{
 				Prefixes =
 				{

@@ -14,7 +14,7 @@ namespace Phema.Caching.Tests
 			services
 				.AddJsonSerializer()
 				.AddDistributedMemoryCache()
-				.AddDistributedCaching(c => c.AddCache<TestModel>("test_model"));
+				.AddPhemaDistributedCache(c => c.AddCache<TestModel>("test_model"));
 
 			var provider = services.BuildServiceProvider();
 

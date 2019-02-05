@@ -7,32 +7,21 @@ using Phema.Serialization;
 
 namespace Phema.Caching
 {
-	public interface IDistributedCache<TKey, TValue>
+	internal sealed class DistributedCache<TValue> : DistributedCache<string, TValue>, IDistributedCache<TValue>
 	{
-		TValue Get(TKey key);
-		Task<TValue> GetAsync(TKey key, CancellationToken token = default);
-
-		void Set(TKey key, TValue value);
-		Task SetAsync(TKey key, TValue value, CancellationToken token = default);
-
-		void Refresh(TKey key);
-		Task RefreshAsync(TKey key, CancellationToken token = default);
-
-		void Remove(TKey key);
-		Task RemoveAsync(TKey key, CancellationToken token = default);
+		public DistributedCache(IDistributedCache cache, ISerializer serializer, IOptions<PhemaDistributedCacheOptions> options) 
+			: base(cache, serializer, options)
+		{
+		}
 	}
-
-	public interface IDistributedCache<TValue> : IDistributedCache<string, TValue>
-	{
-	}
-
+	
 	internal class DistributedCache<TKey, TValue> : IDistributedCache<TKey, TValue>
 	{
-		private readonly IDistributedCache cache;
 		private readonly ISerializer serializer;
-		private readonly DistributedCacheOptions options;
+		private readonly IDistributedCache cache;
+		private readonly PhemaDistributedCacheOptions options;
 
-		public DistributedCache(IDistributedCache cache, ISerializer serializer, IOptions<DistributedCacheOptions> options)
+		public DistributedCache(IDistributedCache cache, ISerializer serializer, IOptions<PhemaDistributedCacheOptions> options)
 		{
 			this.cache = cache;
 			this.serializer = serializer;
@@ -142,14 +131,6 @@ namespace Phema.Caching
 			return cache.RemoveAsync(
 				key: fullKey, 
 				token: token);
-		}
-	}
-
-	internal class DistributedCache<TValue> : DistributedCache<string, TValue>, IDistributedCache<TValue>
-	{
-		public DistributedCache(IDistributedCache cache, ISerializer serializer, IOptions<DistributedCacheOptions> options) 
-			: base(cache, serializer, options)
-		{
 		}
 	}
 }
