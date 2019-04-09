@@ -30,20 +30,20 @@ namespace Phema.Caching.Internal
 {
 	internal class DistributedCache<TKey, TValue> : IDistributedCache<TKey, TValue>
 	{
-		private readonly ISerializer serializer;
 		private readonly IDistributedCache cache;
+		private readonly ISerializer serializer;
 
 		public DistributedCache(IDistributedCache cache, ISerializer serializer)
 		{
 			this.cache = cache;
 			this.serializer = serializer;
 		}
-		
+
 		public TValue Get(TKey key)
 		{
 			if (key is null)
 				throw new ArgumentNullException(nameof(key));
-			
+
 			var data = cache.Get(key.ToString());
 
 			return data is null
@@ -55,7 +55,7 @@ namespace Phema.Caching.Internal
 		{
 			if (key is null)
 				throw new ArgumentNullException(nameof(key));
-			
+
 			var data = await cache.GetAsync(key.ToString(), token);
 
 			return data is null
@@ -67,23 +67,27 @@ namespace Phema.Caching.Internal
 		{
 			if (key is null)
 				throw new ArgumentNullException(nameof(key));
-			
+
 			if (value is null)
 				throw new ArgumentNullException(nameof(value));
-			
+
 			var data = serializer.Serialize(value);
-			
+
 			cache.Set(key.ToString(), data, options);
 		}
 
-		public Task SetAsync(TKey key, TValue value, DistributedCacheEntryOptions options, CancellationToken token = default)
+		public Task SetAsync(
+			TKey key,
+			TValue value,
+			DistributedCacheEntryOptions options,
+			CancellationToken token = default)
 		{
 			if (key is null)
 				throw new ArgumentNullException(nameof(key));
-			
+
 			if (value is null)
 				throw new ArgumentNullException(nameof(value));
-			
+
 			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 

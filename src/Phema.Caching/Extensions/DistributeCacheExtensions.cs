@@ -14,7 +14,7 @@ namespace Phema.Caching
 		public static Task SetAsync<TKey, TValue>(
 			this IDistributedCache<TKey, TValue> cache,
 			TKey key,
-			TValue value, 
+			TValue value,
 			CancellationToken token = default)
 		{
 			return cache.SetAsync(key, value, new DistributedCacheEntryOptions(), token);

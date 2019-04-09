@@ -20,7 +20,7 @@ namespace Phema.Caching.Internal
 		{
 			this.services = services;
 		}
-		
+
 		public IDistributedCacheBuilder AddCache<TValue>()
 		{
 			services.TryAddScoped<IDistributedCache<TValue>, DistributedCache<TValue>>();

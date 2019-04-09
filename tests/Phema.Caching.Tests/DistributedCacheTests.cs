@@ -1,6 +1,6 @@
-using Xunit;
 using Microsoft.Extensions.DependencyInjection;
 using Phema.Serialization;
+using Xunit;
 
 namespace Phema.Caching.Tests
 {
@@ -26,7 +26,7 @@ namespace Phema.Caching.Tests
 
 			var cache = provider.GetRequiredService<IDistributedCache<TestModel>>();
 
-			cache.Set("test", new TestModel { Name = "Test", Age = 12 });
+			cache.Set("test", new TestModel {Name = "Test", Age = 12});
 
 			var model = cache.Get("test");
 
@@ -47,13 +47,13 @@ namespace Phema.Caching.Tests
 			var provider = services.BuildServiceProvider();
 
 			var cache = provider.GetRequiredService<IDistributedCache<TestModel>>();
-			
+
 			cache.Set("test", new TestModel());
-			
+
 			cache.Remove("test");
 
 			var model = cache.Get("test");
-			
+
 			Assert.Null(model);
 		}
 	}

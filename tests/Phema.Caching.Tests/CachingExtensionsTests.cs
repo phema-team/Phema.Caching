@@ -1,7 +1,7 @@
-using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Phema.Serialization;
+using Xunit;
 
 namespace Phema.Caching.Tests
 {
