@@ -1,24 +1,37 @@
-## Phema.Caching
-- Strongly typed IDistributedCache wrapper using DI
-- You can add IDistributedCache explisitly and then add typed caches
-- You can specify key type, using `AddCache<TKey, TModel, TDistributedCache<TKey, TModel>>`
-- By default `TKey` is string
+# Phema.Caching
+
+[![Nuget](https://img.shields.io/nuget/v/Phema.Caching.svg)](https://www.nuget.org/packages/Phema.Caching)
+
+Strongly typed IDistributedCache wrapper using `Microsoft.Extensions.DependencyInjection`
+
+## Installation
+
+```bash
+$> dotnet add package Phema.Caching
+```
+
+## Usage
+
 ```csharp
+// Add
 services.AddDistributedMemoryCache()
-  .AddPhemaDistributedCache(caching =>
-    caching.AddCache<Model, ModelDistributedCache>());
+  .AddDistributedCache(options =>
+    options.AddCache<TestModel>())
+  .AddNewtonsoftJsonSerializer();
+
+// Get
+var cache = provider.GetRequiredService<IDistributedCache<TestModel>>();
+
+// Use
+await cache.SetAsync("test", new TestModel());
 ```
 
-## Phema.Caching.Redis
-- You can simplify definition by using `Phema.Caching.Redis` syntactic sugar
-- You have to specify `ISerializer` from `Phema.Serialization` package
-```csharp
-services.AddPhemaDistributedRedisCache(caching =>
-  caching.AddCache<Model, ModelDistributedCache>());
-```
+- Add `Microsoft.Extensions.Caching.*` package
+- Add `Phema.Serialization.*` package
+- Add `Phema.Caching`
 
-## Phema.Caching.Redis
-```csharp
-services.AddPhemaDistributedMemoryCache(caching =>
-  caching.AddCache<Model, ModelDistributedCache>());
-```
+## Features
+
+- Working with objects, not bytes
+- Used modular `Phema.Serialization` serialization package
+- `IDistributedCache<TValue>` and `IDistributedCache<TKey, TValue>` interfaces

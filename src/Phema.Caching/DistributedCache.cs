@@ -2,135 +2,133 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Options;
 using Phema.Serialization;
 
 namespace Phema.Caching
 {
-	internal sealed class DistributedCache<TValue> : DistributedCache<string, TValue>, IDistributedCache<TValue>
+	public interface IDistributedCache<TKey, TValue>
 	{
-		public DistributedCache(IDistributedCache cache, ISerializer serializer, IOptions<PhemaDistributedCacheOptions> options) 
-			: base(cache, serializer, options)
-		{
-		}
+		TValue Get(TKey key);
+		Task<TValue> GetAsync(TKey key, CancellationToken token = default);
+
+		void Set(TKey key, TValue value, DistributedCacheEntryOptions options);
+		Task SetAsync(TKey key, TValue value, DistributedCacheEntryOptions options, CancellationToken token = default);
+
+		void Refresh(TKey key);
+		Task RefreshAsync(TKey key, CancellationToken token = default);
+
+		void Remove(TKey key);
+		Task RemoveAsync(TKey key, CancellationToken token = default);
 	}
-	
+
+	public interface IDistributedCache<TValue> : IDistributedCache<string, TValue>
+	{
+	}
+}
+
+namespace Phema.Caching.Internal
+{
 	internal class DistributedCache<TKey, TValue> : IDistributedCache<TKey, TValue>
 	{
 		private readonly ISerializer serializer;
 		private readonly IDistributedCache cache;
-		private readonly PhemaDistributedCacheOptions options;
 
-		public DistributedCache(IDistributedCache cache, ISerializer serializer, IOptions<PhemaDistributedCacheOptions> options)
+		public DistributedCache(IDistributedCache cache, ISerializer serializer)
 		{
 			this.cache = cache;
 			this.serializer = serializer;
-			this.options = options.Value;
 		}
 		
 		public TValue Get(TKey key)
 		{
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
 			
-			var fullKey = DistributedCacheHelper.GetFullKey<TKey, TValue>(key, options);
-			
-			var data = cache.Get(fullKey);
-			
-			return data == null
+			var data = cache.Get(key.ToString());
+
+			return data is null
 				? default
 				: serializer.Deserialize<TValue>(data);
 		}
 
 		public async Task<TValue> GetAsync(TKey key, CancellationToken token = default)
 		{
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
-
-			var fullKey = DistributedCacheHelper.GetFullKey<TKey, TValue>(key, options);
 			
-			var data = await cache.GetAsync(fullKey, token);
+			var data = await cache.GetAsync(key.ToString(), token);
 
-			return data == null
+			return data is null
 				? default
 				: serializer.Deserialize<TValue>(data);
 		}
 
-		public void Set(TKey key, TValue value)
+		public void Set(TKey key, TValue value, DistributedCacheEntryOptions options)
 		{
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
-			if (value == null)
-				throw new ArgumentNullException(nameof(value));
-
-			var data = serializer.Serialize(value);
-
-			var fullKey = DistributedCacheHelper.GetFullKey<TKey, TValue>(key, options);
 			
-			cache.Set(
-				key: fullKey,
-				value: data,
-				options: DistributedCacheHelper.GetOptions<TKey, TValue>(options));
+			if (value is null)
+				throw new ArgumentNullException(nameof(value));
+			
+			var data = serializer.Serialize(value);
+			
+			cache.Set(key.ToString(), data, options);
 		}
 
-		public Task SetAsync(TKey key, TValue value, CancellationToken token = default)
+		public Task SetAsync(TKey key, TValue value, DistributedCacheEntryOptions options, CancellationToken token = default)
 		{
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
-			if (value == null)
+			
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
+			
+			if (options is null)
+				throw new ArgumentNullException(nameof(options));
 
 			var data = serializer.Serialize(value);
 
-			var fullKey = DistributedCacheHelper.GetFullKey<TKey, TValue>(key, options);
-			
-			return cache.SetAsync(
-				key: fullKey,
-				value: data, 
-				options: DistributedCacheHelper.GetOptions<TKey, TValue>(options), 
-				token: token);
+			return cache.SetAsync(key.ToString(), data, options, token);
 		}
 
 		public void Refresh(TKey key)
 		{
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
 
-			var fullKey = DistributedCacheHelper.GetFullKey<TKey, TValue>(key, options);
-			
-			cache.Refresh(key: fullKey);
+			cache.Refresh(key.ToString());
 		}
 
 		public Task RefreshAsync(TKey key, CancellationToken token = default)
 		{
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
 
-			var fullKey = DistributedCacheHelper.GetFullKey<TKey, TValue>(key, options);
-			
-			return cache.RefreshAsync(key: fullKey, token: token);
+			return cache.RefreshAsync(key.ToString(), token);
 		}
 
 		public void Remove(TKey key)
 		{
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
-			
-			var fullKey = DistributedCacheHelper.GetFullKey<TKey, TValue>(key, options);
-			
-			cache.Remove(key: fullKey);
+
+			cache.Remove(key.ToString());
 		}
 
 		public Task RemoveAsync(TKey key, CancellationToken token = default)
 		{
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
-			
-			var fullKey = DistributedCacheHelper.GetFullKey<TKey, TValue>(key, options);
-			
-			return cache.RemoveAsync(
-				key: fullKey, 
-				token: token);
+
+			return cache.RemoveAsync(key.ToString(), token);
+		}
+	}
+
+	internal sealed class DistributedCache<TValue> : DistributedCache<string, TValue>, IDistributedCache<TValue>
+	{
+		public DistributedCache(IDistributedCache cache, ISerializer serializer) : base(cache, serializer)
+		{
 		}
 	}
 }

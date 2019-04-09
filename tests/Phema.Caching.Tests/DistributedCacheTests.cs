@@ -1,51 +1,60 @@
-using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Phema.Serialization;
 
 namespace Phema.Caching.Tests
 {
+	public class TestModel
+	{
+		public string Name { get; set; }
+		public int Age { get; set; }
+	}
+
 	public class DistributedCacheTests
 	{
 		[Fact]
-		public void ServiceAddsCache()
+		public void SetGet()
 		{
 			var services = new ServiceCollection();
 
-			services
-				.AddJsonSerializer()
-				.AddDistributedMemoryCache()
-				.AddPhemaDistributedCache(caching =>
-					caching.AddCache<string, TestModel>("prefix"));
-
-			Assert.Single(services.Where(s => s.ServiceType == typeof(IDistributedCache<string, TestModel>)));
-		}
-		
-		[Fact]
-		public async Task AddCache()
-		{
-			var services = new ServiceCollection();
-
-			services
-				.AddJsonSerializer()
-				.AddDistributedMemoryCache()
-				.AddPhemaDistributedCache(caching =>
-					caching.AddCache<string, TestModel>("prefix"));
+			services.AddDistributedMemoryCache()
+				.AddDistributedCache(options =>
+					options.AddCache<TestModel>())
+				.AddNewtonsoftJsonSerializer();
 
 			var provider = services.BuildServiceProvider();
 
-			var memoryCache = provider.GetRequiredService<IDistributedCache>();
-			var cache = provider.GetRequiredService<IDistributedCache<string, TestModel>>();
-			
-			await cache.SetAsync("key", new TestModel { Name = "Alice"});
+			var cache = provider.GetRequiredService<IDistributedCache<TestModel>>();
 
-			Assert.NotNull(memoryCache.Get("prefix:key"));
+			cache.Set("test", new TestModel { Name = "Test", Age = 12 });
 
-			var model = await cache.GetAsync("key");
+			var model = cache.Get("test");
+
+			Assert.Equal("Test", model.Name);
+			Assert.Equal(12, model.Age);
+		}
+
+		[Fact]
+		public void SetRemoveGet()
+		{
+			var services = new ServiceCollection();
+
+			services.AddDistributedMemoryCache()
+				.AddDistributedCache(options =>
+					options.AddCache<TestModel>())
+				.AddNewtonsoftJsonSerializer();
+
+			var provider = services.BuildServiceProvider();
+
+			var cache = provider.GetRequiredService<IDistributedCache<TestModel>>();
 			
-			Assert.Equal("Alice", model.Name);
+			cache.Set("test", new TestModel());
+			
+			cache.Remove("test");
+
+			var model = cache.Get("test");
+			
+			Assert.Null(model);
 		}
 	}
 }

@@ -1,20 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp2.2</TargetFramework>
+		<TargetFramework>netcoreapp3.0</TargetFramework>
+		<Version>3.0.0-preview3.0.0</Version>
 		<RootNamespace>Phema.Caching</RootNamespace>
-		<LangVersion>7.3</LangVersion>
-		<Version>2.0.0</Version>
+		<LangVersion>8</LangVersion>
+		<Authors>sergeyshaykhullin</Authors>
+		<Description>Strongly typed IDistributedCache wrapper</Description>
+		<PackageTags>Caching;.NETCore;ASP.NETCore</PackageTags>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/sergeyshaykhullin/Phema.Caching</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/sergeyshaykhullin/Phema.Caching</PackageProjectUrl>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Phema.Serialization" Version="1.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.2.0" />
-		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.2.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\Phema.Caching.Core\Phema.Caching.Core.csproj" />
+	  <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.0.0-preview3.19153.1" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0-preview3.19153.1" />
+	  <PackageReference Include="Phema.Serialization" Version="3.0.0-preview3.0.0" />
 	</ItemGroup>
 
 </Project>
