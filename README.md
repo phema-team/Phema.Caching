@@ -1,6 +1,6 @@
 # Phema.Caching
 
-[![Nuget](https://img.shields.io/nuget/v/Phema.Caching.svg)](https://www.nuget.org/packages/Phema.Caching)
+[![Build Status](https://cloud.drone.io/api/badges/phema-team/Phema.Caching/status.svg)](https://cloud.drone.io/phema-team/Phema.Caching) [![Nuget](https://img.shields.io/nuget/v/Phema.Caching.svg)](https://www.nuget.org/packages/Phema.Caching)
 
 Strongly typed IDistributedCache wrapper using `Microsoft.Extensions.DependencyInjection`
 

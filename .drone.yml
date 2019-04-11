@@ -1,0 +1,9 @@
+kind: pipeline
+name: default
+
+steps:
+- name: build & test
+  image: mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview3-stretch
+  commands:
+  - dotnet build
+  - dotnet test
