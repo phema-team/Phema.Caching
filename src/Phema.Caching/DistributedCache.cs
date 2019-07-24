@@ -35,8 +35,10 @@ namespace Phema.Caching.Internal
 
 		public DistributedCache(IDistributedCache cache, ISerializer serializer)
 		{
-			this.cache = cache;
-			this.serializer = serializer;
+			this.cache = cache
+				?? throw new ArgumentException("No distributed cache specified. Check for Microsoft.Extensions.Caching.* packages");;
+			this.serializer = serializer
+				?? throw new ArgumentException("No serializer specified. Check for Phema.Serialization.* packages");
 		}
 
 		public TValue Get(TKey key)

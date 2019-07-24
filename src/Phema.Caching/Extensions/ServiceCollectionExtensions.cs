@@ -4,7 +4,7 @@ using Phema.Caching.Internal;
 
 namespace Phema.Caching
 {
-	public static class CachingExtensions
+	public static class ServiceCollectionExtensions
 	{
 		public static IServiceCollection AddDistributedCache(
 			this IServiceCollection services,

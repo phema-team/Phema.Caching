@@ -5,7 +5,14 @@ namespace Phema.Caching
 {
 	public interface IDistributedCacheBuilder
 	{
+		/// <summary>
+		/// Adds <see cref="IDistributedCache{TValue}"/> with string as key
+		/// </summary>
 		IDistributedCacheBuilder AddCache<TValue>();
+		
+		/// <summary>
+		/// Adds <see cref="IDistributedCache{TKey,TValue}"/>
+		/// </summary>
 		IDistributedCacheBuilder AddCache<TKey, TValue>();
 	}
 }

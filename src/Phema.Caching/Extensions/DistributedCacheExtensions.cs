@@ -4,7 +4,7 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace Phema.Caching
 {
-	public static class DistributeCacheExtensions
+	public static class DistributedCacheExtensions
 	{
 		public static void Set<TKey, TValue>(this IDistributedCache<TKey, TValue> cache, TKey key, TValue value)
 		{
