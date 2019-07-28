@@ -18,8 +18,7 @@ namespace Phema.Caching.Tests
 			var services = new ServiceCollection();
 
 			services.AddDistributedMemoryCache()
-				.AddDistributedCache(options =>
-					options.AddCache<TestModel>())
+				.AddDistributedCache()
 				.AddNewtonsoftJsonSerializer();
 
 			var provider = services.BuildServiceProvider();
@@ -40,8 +39,7 @@ namespace Phema.Caching.Tests
 			var services = new ServiceCollection();
 
 			services.AddDistributedMemoryCache()
-				.AddDistributedCache(options =>
-					options.AddCache<TestModel>())
+				.AddDistributedCache()
 				.AddNewtonsoftJsonSerializer();
 
 			var provider = services.BuildServiceProvider();

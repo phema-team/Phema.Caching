@@ -14,13 +14,11 @@ namespace Phema.Caching.Tests
 
 			services
 				.AddDistributedMemoryCache()
-				.AddDistributedCache(caching =>
-					caching.AddCache<int, TestModel>()
-						.AddCache<TestModel>())
+				.AddDistributedCache()
 				.AddNewtonsoftJsonSerializer();
 
-			Assert.Single(services.Where(s => s.ServiceType == typeof(IDistributedCache<int, TestModel>)));
-			Assert.Single(services.Where(s => s.ServiceType == typeof(IDistributedCache<TestModel>)));
+			Assert.Single(services.Where(s => s.ServiceType == typeof(IDistributedCache<,>)));
+			Assert.Single(services.Where(s => s.ServiceType == typeof(IDistributedCache<>)));
 		}
 	}
 }

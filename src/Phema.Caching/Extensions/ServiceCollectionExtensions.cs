@@ -1,16 +1,14 @@
-using System;
 using Microsoft.Extensions.DependencyInjection;
-using Phema.Caching.Internal;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Phema.Caching
 {
 	public static class ServiceCollectionExtensions
 	{
-		public static IServiceCollection AddDistributedCache(
-			this IServiceCollection services,
-			Action<IDistributedCacheBuilder> options)
+		public static IServiceCollection AddDistributedCache(this IServiceCollection services)
 		{
-			options?.Invoke(new DistributedCacheBuilder(services));
+			services.TryAddScoped(typeof(IDistributedCache<>), typeof(DistributedCache<>));
+			services.TryAddScoped(typeof(IDistributedCache<,>), typeof(DistributedCache<,>));
 
 			return services;
 		}

@@ -6,28 +6,41 @@ using Phema.Serialization;
 
 namespace Phema.Caching
 {
+	/// <summary>
+	///   Represents a strongly-typed distributed cache
+	/// </summary>
 	public interface IDistributedCache<TKey, TValue>
 	{
+		/// <inheritdoc cref="IDistributedCache.Get"/>
 		TValue Get(TKey key);
+
+		/// <inheritdoc cref="IDistributedCache.GetAsync"/>
 		Task<TValue> GetAsync(TKey key, CancellationToken token = default);
 
+		/// <inheritdoc cref="IDistributedCache.Set"/>
 		void Set(TKey key, TValue value, DistributedCacheEntryOptions options);
+
+		/// <inheritdoc cref="IDistributedCache.SetAsync"/>
 		Task SetAsync(TKey key, TValue value, DistributedCacheEntryOptions options, CancellationToken token = default);
 
+		/// <inheritdoc cref="IDistributedCache.Refresh"/>
 		void Refresh(TKey key);
+
+		/// <inheritdoc cref="IDistributedCache.RefreshAsync"/>
 		Task RefreshAsync(TKey key, CancellationToken token = default);
 
+		/// <inheritdoc cref="IDistributedCache.Remove"/>
 		void Remove(TKey key);
+
+		/// <inheritdoc cref="IDistributedCache.RemoveAsync"/>
 		Task RemoveAsync(TKey key, CancellationToken token = default);
 	}
 
+	/// <inheritdoc cref="IDistributedCache{TKey, TValue}"/>
 	public interface IDistributedCache<TValue> : IDistributedCache<string, TValue>
 	{
 	}
-}
 
-namespace Phema.Caching.Internal
-{
 	internal class DistributedCache<TKey, TValue> : IDistributedCache<TKey, TValue>
 	{
 		private readonly IDistributedCache cache;
@@ -36,7 +49,9 @@ namespace Phema.Caching.Internal
 		public DistributedCache(IDistributedCache cache, ISerializer serializer)
 		{
 			this.cache = cache
-				?? throw new ArgumentException("No distributed cache specified. Check for Microsoft.Extensions.Caching.* packages");;
+				?? throw new ArgumentException(
+					"No distributed cache specified. Check for Microsoft.Extensions.Caching.* packages");
+
 			this.serializer = serializer
 				?? throw new ArgumentException("No serializer specified. Check for Phema.Serialization.* packages");
 		}
