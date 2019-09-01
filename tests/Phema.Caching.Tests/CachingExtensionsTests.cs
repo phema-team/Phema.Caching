@@ -1,6 +1,5 @@
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using Phema.Serialization;
 using Xunit;
 
 namespace Phema.Caching.Tests
@@ -14,8 +13,7 @@ namespace Phema.Caching.Tests
 
 			services
 				.AddDistributedMemoryCache()
-				.AddDistributedCache()
-				.AddNewtonsoftJsonSerializer();
+				.AddDistributedCache();
 
 			Assert.Single(services.Where(s => s.ServiceType == typeof(IDistributedCache<,>)));
 			Assert.Single(services.Where(s => s.ServiceType == typeof(IDistributedCache<>)));

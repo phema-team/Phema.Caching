@@ -2,8 +2,9 @@
 
 [![Build Status](https://cloud.drone.io/api/badges/phema-team/Phema.Caching/status.svg)](https://cloud.drone.io/phema-team/Phema.Caching)
 [![Nuget](https://img.shields.io/nuget/v/Phema.Caching.svg)](https://www.nuget.org/packages/Phema.Caching)
+[![Nuget](https://img.shields.io/nuget/dt/Phema.Caching.svg)](https://nuget.org/packages/Phema.Caching)
 
-Strongly typed `IDistributedCache` wrapper using `Microsoft.Extensions.DependencyInjection`. Working with objects, not bytes!
+Strongly typed `IDistributedCache` wrapper. Working with objects, not bytes!
 
 ## Installation
 
@@ -11,18 +12,12 @@ Strongly typed `IDistributedCache` wrapper using `Microsoft.Extensions.Dependenc
 $> dotnet add package Phema.Caching
 ```
 
-## Features
-
-- Used modular `Phema.Serialization` serialization packages
-- `IDistributedCache<TValue>` and `IDistributedCache<TKey, TValue>` interfaces
-
 ## Usage
 
 ```csharp
 // Add
-services.AddDistributedMemoryCache() // Microsoft.Extensions.Caching.Memory
-  .AddJsonSerializer() // Phema.Serialization.Json
-  .AddDistributedCache(); // Phema.Caching
+services.AddDistributedCache() // Phema.Caching
+  .AddDistributedMemoryCache(); // Microsoft.Extensions.Caching.Memory
 
 // Get or inject
 var cache = provider.GetRequiredService<IDistributedCache<TestModel>>();
@@ -30,7 +25,3 @@ var cache = provider.GetRequiredService<IDistributedCache<TestModel>>();
 // Use
 await cache.SetAsync("test", new TestModel());
 ```
-
-- Add `Microsoft.Extensions.Caching.*` package
-- Add `Phema.Serialization.*` package
-- Add `Phema.Caching`

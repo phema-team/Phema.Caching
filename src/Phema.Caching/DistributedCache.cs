@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
-using Phema.Serialization;
+using Microsoft.Extensions.Options;
 
 namespace Phema.Caching
 {
@@ -44,16 +44,16 @@ namespace Phema.Caching
 	internal class DistributedCache<TKey, TValue> : IDistributedCache<TKey, TValue>
 	{
 		private readonly IDistributedCache cache;
-		private readonly ISerializer serializer;
+		private readonly DistributedCacheOptions cacheOptions;
 
-		public DistributedCache(IDistributedCache cache, ISerializer serializer)
+		// ReSharper disable once MemberCanBeProtected.Global
+		public DistributedCache(IDistributedCache cache, IOptions<DistributedCacheOptions> cacheOptions)
 		{
 			this.cache = cache
 				?? throw new ArgumentException(
 					"No distributed cache specified. Check for Microsoft.Extensions.Caching.* packages");
 
-			this.serializer = serializer
-				?? throw new ArgumentException("No serializer specified. Check for Phema.Serialization.* packages");
+			this.cacheOptions = cacheOptions.Value;
 		}
 
 		public TValue Get(TKey key)
@@ -65,7 +65,7 @@ namespace Phema.Caching
 
 			return data is null
 				? default
-				: serializer.Deserialize<TValue>(data);
+				: (TValue) cacheOptions.Deserializer(data, typeof(TValue));
 		}
 
 		public async Task<TValue> GetAsync(TKey key, CancellationToken token = default)
@@ -77,7 +77,7 @@ namespace Phema.Caching
 
 			return data is null
 				? default
-				: serializer.Deserialize<TValue>(data);
+				: (TValue) cacheOptions.Deserializer(data, typeof(TValue));
 		}
 
 		public void Set(TKey key, TValue value, DistributedCacheEntryOptions options)
@@ -88,7 +88,7 @@ namespace Phema.Caching
 			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 
-			var data = serializer.Serialize(value);
+			var data = cacheOptions.Serializer(value);
 
 			cache.Set(key.ToString(), data, options);
 		}
@@ -108,7 +108,7 @@ namespace Phema.Caching
 			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 
-			var data = serializer.Serialize(value);
+			var data = cacheOptions.Serializer(value);
 
 			return cache.SetAsync(key.ToString(), data, options, token);
 		}
@@ -148,7 +148,7 @@ namespace Phema.Caching
 
 	internal sealed class DistributedCache<TValue> : DistributedCache<string, TValue>, IDistributedCache<TValue>
 	{
-		public DistributedCache(IDistributedCache cache, ISerializer serializer) : base(cache, serializer)
+		public DistributedCache(IDistributedCache cache, IOptions<DistributedCacheOptions> cacheOptions) : base(cache, cacheOptions)
 		{
 		}
 	}
